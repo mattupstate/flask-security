@@ -200,6 +200,9 @@ def send_confirmation():
             do_flash(*get_message('CONFIRMATION_REQUEST',
                      email=form.user.email))
 
+            if _security.post_send_confirmation_view:
+                return redirect(get_url(_security.post_send_confirmation_view))
+
     if request.is_json:
         return _render_json(form)
 
@@ -260,6 +263,9 @@ def forgot_password():
         if not request.is_json:
             do_flash(*get_message('PASSWORD_RESET_REQUEST',
                      email=form.user.email))
+
+            if _security.post_forgot_view:
+                return redirect(get_url(_security.post_forgot_view))
 
     if request.is_json:
         return _render_json(form, include_user=False)

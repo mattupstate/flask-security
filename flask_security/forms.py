@@ -42,10 +42,17 @@ _default_field_labels = {
 
 
 class ValidatorMixin(object):
-    def __call__(self, form, field):
-        if self.message and self.message.isupper():
-            self.message = get_message(self.message)[0]
-        return super(ValidatorMixin, self).__call__(form, field)
+
+    @property
+    def message(self):
+        if self._templated:
+            return get_message(self._message)[0]
+        return self._message
+
+    @message.setter
+    def message(self, value):
+        self._templated = value and value.isupper()
+        self._message = value
 
 
 class EqualTo(ValidatorMixin, validators.EqualTo):
