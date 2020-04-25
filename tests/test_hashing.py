@@ -10,7 +10,7 @@ from pytest import raises
 from utils import authenticate, init_app_with_options
 from passlib.hash import pbkdf2_sha256, django_pbkdf2_sha256, plaintext
 
-from flask_security.utils import encrypt_password, verify_password, get_hmac
+from flask_security.utils import hash_password, verify_password, get_hmac
 
 
 def test_verify_password_bcrypt_double_hash(app, sqlalchemy_datastore):
@@ -20,7 +20,7 @@ def test_verify_password_bcrypt_double_hash(app, sqlalchemy_datastore):
         'SECURITY_PASSWORD_SINGLE_HASH': False,
     })
     with app.app_context():
-        assert verify_password('pass', encrypt_password('pass'))
+        assert verify_password('pass', hash_password('pass'))
 
 
 def test_verify_password_bcrypt_single_hash(app, sqlalchemy_datastore):
@@ -30,7 +30,7 @@ def test_verify_password_bcrypt_single_hash(app, sqlalchemy_datastore):
         'SECURITY_PASSWORD_SINGLE_HASH': True,
     })
     with app.app_context():
-        assert verify_password('pass', encrypt_password('pass'))
+        assert verify_password('pass', hash_password('pass'))
 
 
 def test_verify_password_single_hash_list(app, sqlalchemy_datastore):
@@ -44,7 +44,7 @@ def test_verify_password_single_hash_list(app, sqlalchemy_datastore):
     })
     with app.app_context():
         # double hash
-        assert verify_password('pass', encrypt_password('pass'))
+        assert verify_password('pass', hash_password('pass'))
         assert verify_password('pass', pbkdf2_sha256.hash(get_hmac('pass')))
         # single hash
         assert verify_password('pass', django_pbkdf2_sha256.hash('pass'))
@@ -59,7 +59,7 @@ def test_verify_password_backward_compatibility(app, sqlalchemy_datastore):
     })
     with app.app_context():
         # double hash
-        assert verify_password('pass', encrypt_password('pass'))
+        assert verify_password('pass', hash_password('pass'))
         # single hash
         assert verify_password('pass', plaintext.hash('pass'))
 

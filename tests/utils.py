@@ -10,7 +10,7 @@ from flask import Response as BaseResponse
 from flask import json
 
 from flask_security import Security
-from flask_security.utils import encrypt_password
+from flask_security.utils import hash_password
 
 _missing = object
 
@@ -48,26 +48,34 @@ def create_roles(ds):
 
 
 def create_users(ds, count=None):
-    users = [('matt@lp.com', 'matt', 'password', ['admin'], True),
-             ('joe@lp.com', 'joe', 'password', ['editor'], True),
-             ('dave@lp.com', 'dave', 'password', ['admin', 'editor'], True),
-             ('jill@lp.com', 'jill', 'password', ['author'], True),
-             ('tiya@lp.com', 'tiya', 'password', [], False),
-             ('gene@lp.com', 'gene', 'password', [], True),
-             ('jess@lp.com', 'jess', None, [], True)]
+    users = [('matt@lp.com', 'matt', 'password', ['admin'], True, None, None),
+             ('joe@lp.com', 'joe', 'password', ['editor'], True, None, None),
+             ('dave@lp.com', 'dave', 'password', [
+              'admin', 'editor'], True, None, None),
+             ('jill@lp.com', 'jill', 'password', ['author'], True, None, None),
+             ('tiya@lp.com', 'tiya', 'password', [], False, None, None),
+             ('jess@lp.com', 'jess', None, [], True, None, None),
+             ('gal@lp.com', 'gal', 'password', [
+              'admin'], True, 'sms', u'RCTE75AP2GWLZIFR'),
+             ('gal2@lp.com', 'gal2', 'password', ['admin'], True,
+              'google_authenticator', u'RCTE75AP2GWLZIFR'),
+             ('gal3@lp.com', 'gal3', 'password', [
+              'admin'], True, 'mail', u'RCTE75AP2GWLZIFR'),
+             ('gene@lp.com', 'gene', 'password', [], True, None, None)]
     count = count or len(users)
 
     for u in users[:count]:
         pw = u[2]
         if pw is not None:
-            pw = encrypt_password(pw)
+            pw = hash_password(pw)
         roles = [ds.find_or_create_role(rn) for rn in u[3]]
         ds.commit()
-        user = ds.create_user(
-            email=u[0],
-            username=u[1],
-            password=pw,
-            active=u[4])
+        user = ds.create_user(email=u[0],
+                              username=u[1],
+                              password=pw,
+                              active=u[4],
+                              two_factor_primary_method=u[5],
+                              totp_secret=u[6])
         ds.commit()
         for role in roles:
             ds.add_role_to_user(user, role)

@@ -316,3 +316,30 @@ msgstr ""
 msgid "You can confirm your email through the link below:"
 msgstr ""
 
+#: flask_security/core.py:244
+msgid "Invalid Token"
+msgstr ""
+
+#: flask_security/core.py:246
+msgid "Your token has been confirmed"
+msgstr ""
+
+#: flask_security/core.py:248
+msgid "You successfully changed your two-factor method."
+msgstr ""
+
+#: flask_security/core.py:251
+msgid "You successfully confirmed password"
+msgstr ""
+
+#: flask_security/core.py:253
+msgid "Password confirmation is needed in order to access page"
+msgstr ""
+
+#: flask_security/core.py:256
+msgid "You currently do not have permissions to access this page"
+msgstr ""
+
+#: flask_security/core.py:259
+msgid "Marked method is not valid"
+msgstr ""

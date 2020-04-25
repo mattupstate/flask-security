@@ -9,6 +9,7 @@ Contents
    quickstart
    models
    customizing
+   two_factor_configurations
    api
    changelog
    authors

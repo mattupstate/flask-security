@@ -12,6 +12,7 @@
 """
 
 from datetime import datetime
+import sys
 
 import pkg_resources
 from flask import current_app, render_template
@@ -26,14 +27,16 @@ from passlib.context import CryptContext
 from werkzeug.datastructures import ImmutableList
 from werkzeug.local import LocalProxy
 
-from .forms import ChangePasswordForm, ConfirmRegisterForm, \
-    ForgotPasswordForm, LoginForm, PasswordlessLoginForm, RegisterForm, \
-    ResetPasswordForm, SendConfirmationForm
-from .utils import _
+from .forms import LoginForm, ConfirmRegisterForm, RegisterForm, \
+    ForgotPasswordForm, ChangePasswordForm, ResetPasswordForm, \
+    SendConfirmationForm, PasswordlessLoginForm, TwoFactorVerifyCodeForm, \
+    TwoFactorSetupForm, TwoFactorChangeMethodVerifyPasswordForm,\
+    TwoFactorRescueForm
 from .utils import config_value as cv
-from .utils import get_config, hash_data, localize_callback, send_mail, \
-    string_types, url_for_security, verify_and_update_password, verify_hash
+from .utils import _, get_config, hash_data, localize_callback, string_types, \
+    url_for_security, verify_hash, send_mail, verify_and_update_password
 from .views import create_blueprint
+
 
 # Convenient references
 _security = LocalProxy(lambda: current_app.extensions['security'])
@@ -84,23 +87,34 @@ _default_config = {
     'CHANGE_PASSWORD_TEMPLATE': 'security/change_password.html',
     'SEND_CONFIRMATION_TEMPLATE': 'security/send_confirmation.html',
     'SEND_LOGIN_TEMPLATE': 'security/send_login.html',
+    'TWO_FACTOR_VERIFY_CODE_TEMPLATE':
+        'security/two_factor_verify_code.html',
+    'TWO_FACTOR_CHOOSE_METHOD_TEMPLATE':
+        'security/two_factor_choose_method.html',
+    'TWO_FACTOR_CHANGE_METHOD_PASSWORD_CONFIRMATION_TEMPLATE':
+        'security/two_factor_change_method_password_confirmation.html',
     'CONFIRMABLE': False,
     'REGISTERABLE': False,
     'RECOVERABLE': False,
     'TRACKABLE': False,
     'PASSWORDLESS': False,
     'CHANGEABLE': False,
+    'TWO_FACTOR': False,
     'SEND_REGISTER_EMAIL': True,
     'SEND_PASSWORD_CHANGE_EMAIL': True,
     'SEND_PASSWORD_RESET_EMAIL': True,
     'SEND_PASSWORD_RESET_NOTICE_EMAIL': True,
     'LOGIN_WITHIN': '1 days',
+    'TWO_FACTOR_GOOGLE_AUTH_VALIDITY': 0,
+    'TWO_FACTOR_MAIL_VALIDITY': 1,
+    'TWO_FACTOR_SMS_VALIDITY': 5,
     'CONFIRM_EMAIL_WITHIN': '5 days',
     'RESET_PASSWORD_WITHIN': '5 days',
     'LOGIN_WITHOUT_CONFIRMATION': False,
     'EMAIL_SENDER': LocalProxy(lambda: current_app.config.get(
         'MAIL_DEFAULT_SENDER', 'no-reply@localhost'
     )),
+    'TWO_FACTOR_RESCUE_MAIL': 'no-reply@localhost',
     'TOKEN_AUTHENTICATION_KEY': 'auth_token',
     'TOKEN_AUTHENTICATION_HEADER': 'Authentication-Token',
     'TOKEN_MAX_AGE': None,
@@ -116,10 +130,12 @@ _default_config = {
     'EMAIL_SUBJECT_PASSWORDLESS': _('Login instructions'),
     'EMAIL_SUBJECT_PASSWORD_NOTICE': _('Your password has been reset'),
     'EMAIL_SUBJECT_PASSWORD_CHANGE_NOTICE': _(
-                                    'Your password has been changed'),
+        'Your password has been changed'),
     'EMAIL_SUBJECT_PASSWORD_RESET': _('Password reset instructions'),
     'EMAIL_PLAINTEXT': True,
     'EMAIL_HTML': True,
+    'EMAIL_SUBJECT_TWO_FACTOR': 'Two-factor Login',
+    'EMAIL_SUBJECT_TWO_FACTOR_RESCUE': 'Two-factor Rescue',
     'USER_IDENTITY_ATTRIBUTES': ['email'],
     'PASSWORD_SCHEMES': [
         'bcrypt',
@@ -138,6 +154,14 @@ _default_config = {
     ],
     'DEPRECATED_HASHING_SCHEMES': ['hex_md5'],
     'DATETIME_FACTORY': datetime.utcnow,
+    'TWO_FACTOR_ENABLED_METHODS': ['mail', 'google_authenticator', 'sms'],
+    'TWO_FACTOR_URI_SERVICE_NAME': 'service_name',
+    'TWO_FACTOR_SMS_SERVICE': 'Dummy',
+    'TWO_FACTOR_SMS_SERVICE_CONFIG': {
+        'ACCOUNT_SID': None,
+        'AUTH_TOKEN': None,
+        'PHONE_NUMBER': None,
+    }
 }
 
 #: Default Flask-Security messages
@@ -217,6 +241,23 @@ _default_messages = {
         _('Please log in to access this page.'), 'info'),
     'REFRESH': (
         _('Please reauthenticate to access this page.'), 'info'),
+    'TWO_FACTOR_INVALID_TOKEN': (
+        _('Invalid Token'), 'error'),
+    'TWO_FACTOR_LOGIN_SUCCESSFUL': (
+        _('Your token has been confirmed'), 'success'),
+    'TWO_FACTOR_CHANGE_METHOD_SUCCESSFUL': (
+        _('You successfully changed your two-factor method.'),
+        'success'),
+    'TWO_FACTOR_PASSWORD_CONFIRMATION_DONE': (
+        _('You successfully confirmed password'), 'success'),
+    'TWO_FACTOR_PASSWORD_CONFIRMATION_NEEDED': (
+        _('Password confirmation is needed in order to access page'),
+        'error'),
+    'TWO_FACTOR_PERMISSION_DENIED': (
+        _('You currently do not have permissions to access this page'),
+        'error'),
+    'TWO_FACTOR_METHOD_NOT_AVAILABLE': (
+        _('Marked method is not valid'), 'error'),
 }
 
 _default_forms = {
@@ -228,6 +269,11 @@ _default_forms = {
     'change_password_form': ChangePasswordForm,
     'send_confirmation_form': SendConfirmationForm,
     'passwordless_login_form': PasswordlessLoginForm,
+    'two_factor_verify_code_form': TwoFactorVerifyCodeForm,
+    'two_factor_setup_form': TwoFactorSetupForm,
+    'two_factor_change_method_verify_password_form':
+        TwoFactorChangeMethodVerifyPasswordForm,
+    'two_factor_rescue_form': TwoFactorRescueForm
 }
 
 
@@ -493,8 +539,12 @@ class Security(object):
     :param anonymous_user: class to use for anonymous user
     """
 
-    def __init__(self, app=None, datastore=None, register_blueprint=True,
+    def __init__(self,
+                 app=None,
+                 datastore=None,
+                 register_blueprint=True,
                  **kwargs):
+
         self.app = app
         self._datastore = datastore
         self._register_blueprint = register_blueprint
@@ -508,7 +558,10 @@ class Security(object):
                 register_blueprint=register_blueprint,
                 **kwargs)
 
-    def init_app(self, app, datastore=None, register_blueprint=None, **kwargs):
+    def init_app(self,
+                 app, datastore=None,
+                 register_blueprint=None,
+                 **kwargs):
         """Initializes the Flask-Security extension for the specified
         application and datastore implementation.
 
@@ -557,7 +610,50 @@ class Security(object):
             if state.cli_roles_name:
                 app.cli.add_command(roles, state.cli_roles_name)
 
+        # configuration mismatch check
+        if cv('TWO_FACTOR', app=app) is True and\
+                len(cv('TWO_FACTOR_ENABLED_METHODS',
+                       app=app)) < 1:  # pragma: no cover
+
+            raise ValueError()
+
+        config_value = cv('TWO_FACTOR', app=app)
+        if config_value:  # pragma: no cover
+            self.check_two_factor_modules('onetimepass',
+                                          'TWO_FACTOR', config_value)
+            self.check_two_factor_modules('pyqrcode',
+                                          'TWO_FACTOR', config_value)
+
+        config_value = cv('TWO_FACTOR_SMS_SERVICE', app=app)
+
+        if config_value == 'Twilio':  # pragma: no cover
+            self.check_two_factor_modules('twilio',
+                                          'TWO_FACTOR_SMS_SERVICE',
+                                          config_value)
+
         return state
+
+    def check_two_factor_modules(self, module,
+                                 config_name,
+                                 config_value):  # pragma: no cover
+        PY3 = sys.version_info[0] == 3
+        if PY3:
+            from importlib.util import find_spec
+            module_exists = find_spec(module)
+
+        else:
+            import imp
+            try:
+                imp.find_module(module)
+                module_exists = True
+            except ImportError:
+                module_exists = False
+
+        if not module_exists:
+            raise ValueError('{} is required for {} = {}'
+                             .format(module, config_name, config_value))
+
+        return module_exists
 
     def render_template(self, *args, **kwargs):
         return render_template(*args, **kwargs)

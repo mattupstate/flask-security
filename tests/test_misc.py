@@ -147,6 +147,16 @@ def test_addition_identity_attributes(app, sqlalchemy_datastore):
     assert b'Hello matt@lp.com' in response.data
 
 
+def test_passwordless_and_two_factor_configuration_mismatch(
+        app,
+        sqlalchemy_datastore):
+    with pytest.raises(ValueError):
+        init_app_with_options(app, sqlalchemy_datastore, **{
+            'SECURITY_TWO_FACTOR': True,
+            'SECURITY_TWO_FACTOR_ENABLED_METHODS': []
+        })
+
+
 def test_flash_messages_off(app, sqlalchemy_datastore, get_message):
     init_app_with_options(app, sqlalchemy_datastore, **{
         'SECURITY_FLASH_MESSAGES': False

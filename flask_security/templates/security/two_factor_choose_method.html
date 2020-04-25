@@ -1,0 +1,32 @@
+{% from "security/_macros.html" import render_field_with_errors, render_field, render_field_no_label %}
+{% include "security/_messages.html" %}
+<h1>Two-factor authentication adds an extra layer of security to your account</h1>
+<h2>In addition to your username and password, you'll need to use a code that we will send you </h2>
+<form action="{{ url_for_security('two_factor_setup_function') }}" method="POST" name="two_factor_setup_form">
+  {{ two_factor_setup_form.hidden_tag() }}
+  {% for subfield in two_factor_setup_form.setup %}
+  {% if subfield.data in choices %}
+  {{ render_field_with_errors(subfield) }}
+  {% endif %}
+  {% endfor %}
+  {{ render_field(two_factor_setup_form.submit, value='submit choice') }}
+  {% if chosen_method=='mail' and chosen_method in choices %}
+  <p> To complete logging in, please enter the code sent to your mail </p>
+  {% endif %}
+  {% if chosen_method=='google_authenticator' and chosen_method in choices %}
+  <p> Open Google Authenticator on your device and scan the following qrcode to start receiving codes:</p>
+  <p><img id="qrcode" src="{{ url_for_security('two_factor_qrcode') }}"></p>
+  {% endif %}
+  {% if chosen_method=='sms' and chosen_method in choices %}
+  <p> To Which Phone Number Should We Send Code To?</p>
+  {{ two_factor_setup_form.hidden_tag() }}
+  {{ render_field_with_errors(two_factor_setup_form.phone, placeholder="enter phone number") }}
+  {{ render_field(two_factor_setup_form.submit, value='submit phone') }}
+  {% endif %}
+</form>
+<form action="{{ url_for_security('two_factor_token_validation') }}" method="POST" name="two_factor_verify_code_form">
+  {{ two_factor_verify_code_form.hidden_tag() }}
+  {{ render_field_with_errors(two_factor_verify_code_form.code) }}
+  {{ render_field(two_factor_verify_code_form.submit, value='submit code') }}
+</form>
+{% include "security/_menu.html" %}

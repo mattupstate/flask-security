@@ -46,21 +46,28 @@ def app(request):
     app.config['TESTING'] = True
     app.config['LOGIN_DISABLED'] = False
     app.config['WTF_CSRF_ENABLED'] = False
+    app.config['SECURITY_TWO_FACTOR_SMS_SERVICE'] = 'test'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     app.config['SECURITY_PASSWORD_SALT'] = 'salty'
 
     for opt in ['changeable', 'recoverable', 'registerable',
-                'trackable', 'passwordless', 'confirmable']:
+                'trackable', 'passwordless', 'confirmable', 'two_factor']:
         app.config['SECURITY_' + opt.upper()] = opt in request.keywords
 
-    if 'settings' in request.keywords:
-        for key, value in request.keywords['settings'].kwargs.items():
+    pytest_major = int(pytest.__version__.split('.')[0])
+    if pytest_major >= 4:
+        marker_getter = request.node.get_closest_marker
+    else:
+        marker_getter = request.keywords.get
+    settings = marker_getter('settings')
+    babel = marker_getter('babel')
+    if settings is not None:
+        for key, value in settings.kwargs.items():
             app.config['SECURITY_' + key.upper()] = value
 
     mail = Mail(app)
-    if 'babel' not in request.keywords or \
-            request.keywords['babel'].args[0]:
+    if babel is None or babel.args[0]:
         babel = Babel(app)
         app.babel = babel
     app.json_encoder = JSONEncoder
@@ -168,6 +175,10 @@ def mongoengine_datastore(app):
         password = db.StringField(required=False, max_length=255)
         last_login_at = db.DateTimeField()
         current_login_at = db.DateTimeField()
+        two_factor_primary_method = db.StringField(
+            max_length=255)
+        totp_secret = db.StringField(max_length=255)
+        phone_number = db.StringField(max_length=255)
         last_login_ip = db.StringField(max_length=100)
         current_login_ip = db.StringField(max_length=100)
         login_count = db.IntField()
@@ -208,6 +219,9 @@ def sqlalchemy_datastore(request, app, tmpdir):
         username = db.Column(db.String(255))
         password = db.Column(db.String(255))
         last_login_at = db.Column(db.DateTime())
+        two_factor_primary_method = db.Column(db.String(255), nullable=True)
+        totp_secret = db.Column(db.String(255), nullable=True)
+        phone_number = db.Column(db.String(255), nullable=True)
         current_login_at = db.Column(db.DateTime())
         last_login_ip = db.Column(db.String(100))
         current_login_ip = db.Column(db.String(100))
@@ -270,6 +284,9 @@ def sqlalchemy_session_datastore(request, app, tmpdir):
         password = Column(String(255))
         last_login_at = Column(DateTime())
         current_login_at = Column(DateTime())
+        two_factor_primary_method = Column(String(255), nullable=True)
+        totp_secret = Column(String(255), nullable=True)
+        phone_number = Column(String(255), nullable=True)
         last_login_ip = Column(String(100))
         current_login_ip = Column(String(100))
         login_count = Column(Integer)
@@ -316,6 +333,9 @@ def peewee_datastore(request, app, tmpdir):
         password = TextField(null=True)
         last_login_at = DateTimeField(null=True)
         current_login_at = DateTimeField(null=True)
+        two_factor_primary_method = TextField(null=True)
+        totp_secret = TextField(null=True)
+        phone_number = TextField(null=True)
         last_login_ip = TextField(null=True)
         current_login_ip = TextField(null=True)
         login_count = IntegerField(null=True)
@@ -325,13 +345,14 @@ def peewee_datastore(request, app, tmpdir):
     class UserRoles(db.Model):
         """ Peewee does not have built-in many-to-many support, so we have to
         create this mapping class to link users to roles."""
-        user = ForeignKeyField(User, related_name='roles')
-        role = ForeignKeyField(Role, related_name='users')
+        user = ForeignKeyField(User, backref='roles')
+        role = ForeignKeyField(Role, backref='users')
         name = property(lambda self: self.role.name)
         description = property(lambda self: self.role.description)
 
     with app.app_context():
         for Model in (Role, User, UserRoles):
+            Model.drop_table()
             Model.create_table()
 
     def tear_down():
@@ -363,6 +384,9 @@ def pony_datastore(request, app, tmpdir):
         password = Optional(str, nullable=True)
         last_login_at = Optional(datetime)
         current_login_at = Optional(datetime)
+        two_factor_primary_method = Optional(str, nullable=True)
+        totp_secret = Optional(str, nullable=True)
+        phone_number = Optional(str, nullable=True)
         last_login_ip = Optional(str)
         current_login_ip = Optional(str)
         login_count = Optional(int)

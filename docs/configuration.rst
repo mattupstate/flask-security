@@ -69,6 +69,10 @@ Core
                                          to ``MAIL_DEFAULT_SENDER`` if
                                          Flask-Mail is used otherwise
                                          ``no-reply@localhost``.
+``SECURITY_TWO_FACTOR_RESCUE_MAIL``      Specifies the email address users send
+                                         mail to when they can't complete the
+                                         two-factor authentication login.
+                                         Defaults to ``no-reply@localhost``.
 ``SECURITY_TOKEN_AUTHENTICATION_KEY``    Specifies the query string parameter to
                                          read when using token authentication.
                                          Defaults to ``auth_token``.
@@ -151,31 +155,45 @@ Template Paths
 
 .. tabularcolumns:: |p{6.5cm}|p{8.5cm}|
 
-======================================== =======================================
-``SECURITY_FORGOT_PASSWORD_TEMPLATE``    Specifies the path to the template for
-                                         the forgot password page. Defaults to
-                                         ``security/forgot_password.html``.
-``SECURITY_LOGIN_USER_TEMPLATE``         Specifies the path to the template for
-                                         the user login page. Defaults to
-                                         ``security/login_user.html``.
-``SECURITY_REGISTER_USER_TEMPLATE``      Specifies the path to the template for
-                                         the user registration page. Defaults to
-                                         ``security/register_user.html``.
-``SECURITY_RESET_PASSWORD_TEMPLATE``     Specifies the path to the template for
-                                         the reset password page. Defaults to
-                                         ``security/reset_password.html``.
-``SECURITY_CHANGE_PASSWORD_TEMPLATE``    Specifies the path to the template for
-                                         the change password page. Defaults to
-                                         ``security/change_password.html``.
-``SECURITY_SEND_CONFIRMATION_TEMPLATE``  Specifies the path to the template for
-                                         the resend confirmation instructions
-                                         page. Defaults to
-                                         ``security/send_confirmation.html``.
-``SECURITY_SEND_LOGIN_TEMPLATE``         Specifies the path to the template for
-                                         the send login instructions page for
-                                         passwordless logins. Defaults to
-                                         ``security/send_login.html``.
-======================================== =======================================
+============================================== =======================================
+``SECURITY_FORGOT_PASSWORD_TEMPLATE``          Specifies the path to the template for
+                                               the forgot password page. Defaults to
+                                               ``security/forgot_password.html``.
+``SECURITY_LOGIN_USER_TEMPLATE``               Specifies the path to the template for
+                                               the user login page. Defaults to
+                                               ``security/login_user.html``.
+``SECURITY_REGISTER_USER_TEMPLATE``            Specifies the path to the template for
+                                               the user registration page. Defaults to
+                                               ``security/register_user.html``.
+``SECURITY_RESET_PASSWORD_TEMPLATE``           Specifies the path to the template for
+                                               the reset password page. Defaults to
+                                               ``security/reset_password.html``.
+``SECURITY_CHANGE_PASSWORD_TEMPLATE``          Specifies the path to the template for
+                                               the change password page. Defaults to
+                                               ``security/change_password.html``.
+``SECURITY_SEND_CONFIRMATION_TEMPLATE``        Specifies the path to the template for
+                                               the resend confirmation instructions
+                                               page. Defaults to
+                                               ``security/send_confirmation.html``.
+``SECURITY_SEND_LOGIN_TEMPLATE``               Specifies the path to the template for
+                                               the send login instructions page for
+                                               passwordless logins. Defaults to
+                                               ``security/send_login.html``.
+``SECURITY_TWO_FACTOR_VERIFY_CODE_TEMPLATE``   Specifies the path to the template for
+                                               the verify code page for the two-factor
+                                               authentication process. Defaults to
+                                               ``security/two_factor_verify_code.html``.
+
+``SECURITY_TWO_FACTOR_CHOOSE_METHOD_TEMPLATE``   Specifies the path to the template for
+                                               the choose method page for the two
+                                               factor authentication process. Defaults
+                                               to ``security/two_factor_choose_method.html``
+``SECURITY_TWO_FACTOR_CHANGE_METHOD_TEMPLATE`` Specifies the path to the template for
+                                               the change method page for the two
+                                               factor authentication process. Defaults
+                                               to ``security/two_factor_change_method_password_confirmation.html``.
+
+============================================== =======================================
 
 
 Feature Flags
@@ -214,6 +232,15 @@ Feature Flags
                           change password endpoint. The URL for this endpoint is
                           specified by the ``SECURITY_CHANGE_URL`` configuration
                           option. Defaults to ``False``.
+``SECURITY_TWO_FACTOR``   Specifies if Flask-Security should enable the
+                          two-factor login feature. If set to ``True``, in
+                          addition to their passwords, users will be required to
+                          enter a code that is sent to them. The added feature
+                          includes the ability to send it either via email, sms
+                          message, or Google Authenticator. Default time of
+                          validity is 30 seconds in Google Authenticator and up
+                          to 60 seconds if sent by mail or sms.
+                          Defaults to ``False``.
 ========================= ======================================================
 
 Email
@@ -249,6 +276,12 @@ Email
 ``SECURITY_EMAIL_HTML``                           Sends email as HTML using
                                                   ``*.html`` template. Defaults
                                                   to ``True``.
+``SECURITY_EMAIL_SUBJECT_TWO_FACTOR``             Sets the subject for the two
+                                                  factor feature. Defaults to
+                                                  ``Two-factor Login``
+``SECURITY_EMAIL_SUBJECT_TWO_FACTOR_RESCUE``      Sets the subject for the two
+                                                  factor help function. Defaults
+                                                  to ``Two-factor Rescue``
 ================================================= ==============================
 
 Miscellaneous
@@ -290,6 +323,28 @@ Miscellaneous
                                               enabled. Always pluralized the
                                               time unit for this value.
                                               Defaults to ``1 days``.
+``SECURITY_TWO_FACTOR_GOOGLE_AUTH_VALIDITY``  Specifies the number of time
+                                              windows user has before the token
+                                              generated for him using google
+                                              authenticator is valid. time
+                                              windows specifies the amount of
+                                              time, which is 30 seconds for each
+                                              window. Default to 0, which is up
+                                              to 30 seconds.
+``SECURITY_TWO_FACTOR_MAIL_VALIDITY``         Specifies the number of time
+                                              windows user has before the token
+                                              sent to him using mail is valid.
+                                              time windows specifies the amount
+                                              of time, which is 30 seconds for
+                                              each window. Default to 1, which
+                                              is up to 60 seconds.
+``SECURITY_TWO_FACTOR_SMS_VALIDITY``         Specifies the number of time
+                                              windows user has before the token
+                                              sent to him using sms is valid.
+                                              time windows specifies the amount
+                                              of time, which is 30 seconds for
+                                              each window. Default to 5, which
+                                              is up to 3 minutes.                                                                                            .
 ``SECURITY_LOGIN_WITHOUT_CONFIRMATION``       Specifies if a user may login
                                               before confirming their email when
                                               the value of
@@ -315,6 +370,24 @@ Miscellaneous
 ``SECURITY_DEFAULT_REMEMBER_ME``              Specifies the default "remember
                                               me" value used when logging in
                                               a user. Defaults to ``False``.
+``SECURITY_TWO_FACTOR_ENABLED_METHODS``       Specifies the default enabled
+                                              methods for two-factor
+                                              authentication. defaults to
+                                              ``['mail', 'google_authenticator',
+                                              'sms']`` which are the only
+                                              supported method at the moment.
+``SECURITY_TWO_FACTOR_URI_SERVICE_NAME``      Specifies the name of the service
+                                              or application that the user is
+                                              authenticating to. Defaults to
+                                              ``service_name``
+``SECURITY_TWO_FACTOR_SMS_SERVICE``           Specifies the name of the sms
+                                              service provider. Defaults to
+                                              ``Dummy`` which does nothing.
+``SECURITY_TWO_FACTOR_SMS_SERVICE_CONFIG``    Specifies a dictionary of basic
+                                              configurations needed for use of a
+                                              sms service. Defaults to
+                                              ``{'ACCOUNT_ID': NONE, 'AUTH_TOKEN
+                                              ':NONE, 'PHONE_NUMBER': NONE}``
 ``SECURITY_DATETIME_FACTORY``                 Specifies the default datetime
                                               factory. Defaults to
                                               ``datetime.datetime.utcnow``.
@@ -359,5 +432,12 @@ The default messages and error levels can be found in ``core.py``.
 * ``SECURITY_MSG_PASSWORD_RESET_REQUEST``
 * ``SECURITY_MSG_REFRESH``
 * ``SECURITY_MSG_RETYPE_PASSWORD_MISMATCH``
+* ``SECURITY_MSG_TWO_FACTOR_INVALID_TOKEN``
+* ``SECURITY_MSG_TWO_FACTOR_LOGIN_SUCCESSFUL``
+* ``SECURITY_MSG_TWO_FACTOR_CHANGE_METHOD_SUCCESSFUL``
+* ``SECURITY_MSG_TWO_FACTOR_PASSWORD_CONFIRMATION_DONE``
+* ``SECURITY_MSG_TWO_FACTOR_PASSWORD_CONFIRMATION_NEEDED``
+* ``SECURITY_MSG_TWO_FACTOR_PERMISSION_DENIED``
+* ``SECURITY_MSG_TWO_FACTOR_METHOD_NOT_AVAILABLE``
 * ``SECURITY_MSG_UNAUTHORIZED``
 * ``SECURITY_MSG_USER_DOES_NOT_EXIST``

@@ -81,6 +81,20 @@ Utils
 
 .. autofunction:: flask_security.utils.get_token_status
 
+.. autoclass:: SmsSenderBaseClass
+  ..method:: init(self)
+  ..method:: send_sms(self, from_number, to_number, msg)
+
+.. autoclass:: DummySmsSender
+  ..method:: send_sms(self, from_number, to_number, msg)
+
+.. autoclass:: SmsSenderFactory
+  :members: senders
+
+.. autoclass:: TwilioSmsSender(SmsSenderBaseClass)
+  ..method:: init(self)
+  ..method:: send_sms(self, from_number, to_number, msg)
+
 Signals
 -------
 See the `Flask documentation on signals`_ for information on how to use these
@@ -125,5 +139,14 @@ sends the following signals.
    Sent when a user requests a password reset. In addition to the app (which is
    the sender), it is passed `user` and `token` arguments.
 
+.. data:: user_two_factored
+
+    Sent when a user performs two-factor authentication login on the site. In
+    addition to the app (which is the sender), it is passed `user` argument
+
+.. data:: two_factor_method_changed
+
+  Sent when two-factor is used and user logs in. In addition to the app
+  (which is the sender), it is passed `user` argument.
 
 .. _Flask documentation on signals: http://flask.pocoo.org/docs/signals/

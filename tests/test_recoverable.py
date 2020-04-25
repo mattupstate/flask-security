@@ -158,6 +158,7 @@ def test_expired_reset_token(client, get_message):
 def test_reset_token_deleted_user(app, client, get_message,
                                   sqlalchemy_datastore):
     with capture_reset_password_requests() as requests:
+
         client.post(
             '/reset',
             data=dict(

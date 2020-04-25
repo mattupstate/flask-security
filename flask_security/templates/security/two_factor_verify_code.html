@@ -1,0 +1,21 @@
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+{% include "security/_messages.html" %}
+<h1>Two-factor Authentication </h1>
+<h2>Please enter your authentication code </h2>
+<form action="{{ url_for_security('two_factor_token_validation') }}" method="POST" name="two_factor_verify_code_form">
+  {{ two_factor_verify_code_form.hidden_tag() }}
+  {{ render_field_with_errors(two_factor_verify_code_form.code, placeholder="enter code") }}
+  {{ render_field(two_factor_verify_code_form.submit, value='submit code') }}
+</form>
+<form action="{{ url_for_security('two_factor_rescue_function') }}" method="POST" name="two_factor_rescue_form">
+  {{ two_factor_rescue_form.hidden_tag() }}
+  {{ render_field_with_errors(two_factor_rescue_form.help_setup) }}
+  {% if problem=='lost_device' %}
+  <p> The code for authentication was sent to your email address</p>
+  {% endif %}
+  {% if problem=='no_mail_access' %}
+  <p> A mail was sent to us in order to reset your application account</p>
+  {% endif %}
+  {{ render_field(two_factor_rescue_form.submit, value='submit') }}
+</form>
+{% include "security/_menu.html" %}

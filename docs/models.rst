@@ -15,6 +15,7 @@ your `User` and `Role` model should include the following fields:
 * ``password``
 * ``active``
 
+
 **Role**
 
 * ``id``
@@ -74,3 +75,17 @@ serializable object:
                 'name': self.name,
                 'email': self.email
             }
+
+Two_Factor
+^^^^^^^^^^
+
+If you enable two-factor by setting your application's `TWO_FACTOR`
+configuration value to `True`, your `User` model will require the following
+additional fields:
+
+* ``totp_secret``
+* ``two_factor_primary_method``
+
+If you include 'sms' in SECURITY_TWO_FACTOR_ENABLED_METHOD, your `User` model
+will require the following additional field:
+* ``phone_number``

@@ -82,7 +82,6 @@ def test_recoverable_flag(app, client, get_message):
     assert get_message('PASSWORD_CHANGE') in response.data
     assert b'Home Page' in response.data
     assert len(recorded) == 1
-    assert len(outbox) == 1
     assert "Your password has been changed" in outbox[0].html
 
     # Test leading & trailing whitespace not stripped

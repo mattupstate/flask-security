@@ -3,15 +3,19 @@ notifications:
 
 language: python
 
+dist: xenial
+
 python:
   - "2.7"
   - "3.5"
   - "3.6"
-  - "pypy"
+  - "3.7"
+  - "pypy3.5-6.0"
 
 addons:
   apt:
     packages:
+      - gettext
       - libenchant-dev
       - aspell-en
       - aspell-da
@@ -24,7 +28,7 @@ addons:
 
 matrix:
   allow_failures:
-    - python: pypy
+    - python: pypy3.5-6.0
 
 sudo: false
 
@@ -45,7 +49,7 @@ before_install:
   - "requirements-builder -e all --level=min setup.py > .travis-lowest-requirements.txt"
   - "requirements-builder -e all --level=pypi setup.py > .travis-release-requirements.txt"
   - |
-      if [ "$TRAVIS_PYTHON_VERSION" = "pypy" ]; then
+      if [ "$TRAVIS_PYTHON_VERSION" = "pypy3.5-6.0" ]; then
         export PYENV_ROOT="$HOME/.pyenv"
         if [ -f "$PYENV_ROOT/bin/pyenv" ]; then
           cd "$PYENV_ROOT" && git pull
