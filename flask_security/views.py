@@ -287,6 +287,7 @@ def reset_password(token):
         return redirect(url_for('forgot_password'))
 
     form = _security.reset_password_form()
+    form.user = user
 
     if form.validate_on_submit():
         after_this_request(_commit)

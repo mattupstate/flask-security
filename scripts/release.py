@@ -10,6 +10,8 @@
     :copyright: (c) 2011 by Armin Ronacher.
     :license: BSD, see LICENSE for more details.
 """
+from __future__ import print_function
+
 import os
 import re
 import sys
@@ -111,12 +113,12 @@ def build_and_upload():
 
 
 def fail(message, *args):
-    print >> sys.stderr, 'Error:', message % args
+    print('Error: %s' % message % args, file=sys.stderr)
     sys.exit(1)
 
 
 def info(message, *args):
-    print >> sys.stderr, message % args
+    print(message % args, file=sys.stderr)
 
 
 def get_git_tags():
