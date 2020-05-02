@@ -24,7 +24,7 @@ from flask_principal import Identity, Principal, RoleNeed, UserNeed, \
 from itsdangerous import URLSafeTimedSerializer
 from passlib.context import CryptContext
 from werkzeug.datastructures import ImmutableList
-from werkzeug.local import LocalProxy
+from werkzeug.local import LocalProxy, Local
 
 from .forms import ChangePasswordForm, ConfirmRegisterForm, \
     ForgotPasswordForm, LoginForm, PasswordlessLoginForm, RegisterForm, \
@@ -34,9 +34,11 @@ from .utils import config_value as cv
 from .utils import get_config, hash_data, localize_callback, send_mail, \
     string_types, url_for_security, verify_and_update_password, verify_hash
 from .views import create_blueprint
+from .cache import VerifyHashCache
 
 # Convenient references
 _security = LocalProxy(lambda: current_app.extensions['security'])
+local_cache = Local()
 
 
 #: Default Flask-Security configuration
@@ -245,14 +247,31 @@ def _request_loader(request):
         if isinstance(data, dict):
             token = data.get(args_key, token)
 
+    use_cache = current_app.config.get('USE_VERIFY_PASSWORD_CACHE')
+
     try:
         data = _security.remember_token_serializer.loads(
             token, max_age=_security.token_max_age)
         user = _security.datastore.find_user(id=data[0])
-        if user and verify_hash(data[1], user.password):
-            return user
     except:
-        pass
+        user = None
+
+    if not user:
+        return _security.login_manager.anonymous_user()
+    if use_cache:
+        cache = getattr(local_cache, 'verify_hash_cache', None)
+        if cache is None:
+            cache = VerifyHashCache()
+            local_cache.verify_hash_cache = cache
+        if cache.has_verify_hash_cache(user):
+            return user
+        if verify_hash(data[1], user.password):
+            cache.set_cache(user)
+            return user
+    else:
+        if verify_hash(data[1], user.password):
+            return user
+
     return _security.login_manager.anonymous_user()
 
 

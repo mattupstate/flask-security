@@ -82,6 +82,17 @@ Core
 ``SECURITY_DEFAULT_HTTP_AUTH_REALM``     Specifies the default authentication
                                          realm when using basic HTTP auth.
                                          Defaults to ``Login Required``
+``USE_VERIFY_PASSWORD_CACHE``            If ``True`` Enables cache for token
+                                         verification, make it quicker further
+                                         calls to authenticated routes using
+                                         token and slow hash algorithms
+                                         (like bcrypt). Defaults to ``None``
+``VERIFY_HASH_CACHE_MAX_SIZE``           Limitation for token validation cache size
+                                         Rules are the ones of TTLCache of
+                                         cachetools package. Defaults to
+                                         ``500``
+``VERIFY_HASH_CACHE_TTL``                Time to live for password check cache entries.
+                                         Defaults to ``300`` (5 minutes)
 ======================================== =======================================
 
 
