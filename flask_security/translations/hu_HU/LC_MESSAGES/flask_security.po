@@ -1,0 +1,330 @@
+# Hungarian translation for Flask-Security (Tegező)
+# 
+# Copyright (C) 2017 ORGANIZATION
+# This file is distributed under the same license as the Flask-Security
+# project.
+# Csaba Koller <cskolly@enum.hu>, 2020,
+# 
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Flask-Security 2.0.1\n"
+"Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
+"POT-Creation-Date: 2017-06-06 13:23+0200\n"
+"PO-Revision-Date: 2017-09-25 09:14+0200\n"
+"Last-Translator: Csaba Koller <cskolly@enum.hu>\n"
+"Language: hu_HU\n"
+"Language-Team: hu_HU <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.4.0\n"
+
+#: flask_security/core.py:99
+msgid "Login Required"
+msgstr "Bejelentkezés szükséges"
+
+#: flask_security/core.py:100
+msgid "Welcome"
+msgstr "Üdvözlet"
+
+#: flask_security/core.py:101
+msgid "Please confirm your email"
+msgstr "Kérlek add meg az emailcímed újra"
+
+#: flask_security/core.py:102
+msgid "Login instructions"
+msgstr "Bejelentkezési útmutató"
+
+#: flask_security/core.py:103
+#: flask_security/templates/security/email/reset_notice.html:1
+msgid "Your password has been reset"
+msgstr "A jelszavad resetelve lett"
+
+#: flask_security/core.py:104
+msgid "Your password has been changed"
+msgstr "Jelszavad megváltozott"
+
+#: flask_security/core.py:106
+msgid "Password reset instructions"
+msgstr "Jelszó reset útmutató"
+
+#: flask_security/core.py:132
+msgid "You do not have permission to view this resource."
+msgstr "Ennek megtekintéséhez nincs jogosoltságod "
+
+#: flask_security/core.py:134
+#, python-format
+msgid "Thank you. Confirmation instructions have been sent to %(email)s."
+msgstr "Köszönjük, a visszaigazoláshoz emailben a %(email)s címre küldtük el az útmutatót."
+
+#: flask_security/core.py:138
+msgid "Thank you. Your email has been confirmed."
+msgstr "Köszönjük az email cím vissza lett igazolva."
+
+#: flask_security/core.py:140
+msgid "Your email has already been confirmed."
+msgstr "Az email címed már vissza lett igazolva."
+
+#: flask_security/core.py:142
+msgid "Invalid confirmation token."
+msgstr "Érvénytelen visszaigazolási token"
+
+#: flask_security/core.py:144
+#, python-format
+msgid "%(email)s is already associated with an account."
+msgstr "A %(email)s már egy létező regisztrációhoz tartozik."
+
+#: flask_security/core.py:146
+msgid "Password does not match"
+msgstr "A jelszó nem egyezik"
+
+#: flask_security/core.py:148
+msgid "Passwords do not match"
+msgstr "A jelszavak nem egyeznek"
+
+#: flask_security/core.py:150
+msgid "Redirections outside the domain are forbidden"
+msgstr "Átirányítás a domain-en kívülre tiltva van."
+
+#: flask_security/core.py:152
+#, python-format
+msgid "Instructions to reset your password have been sent to %(email)s."
+msgstr "Útmutató a jelszó reset-eléséhez a %(email)s címre elküldve."
+
+#: flask_security/core.py:155
+#, python-format
+msgid ""
+"You did not reset your password within %(within)s. New instructions have "
+"been sent to %(email)s."
+msgstr ""
+"A jelszavad nem lett reset-elve %(within)s időn belül. Új útmutatót küldtünk"
+"a %(email)s címre."
+
+#: flask_security/core.py:158
+msgid "Invalid reset password token."
+msgstr "Érvénytelen jelszó reset token."
+
+#: flask_security/core.py:160
+msgid "Email requires confirmation."
+msgstr "Az emailcímedet vissza kell igazolni."
+
+#: flask_security/core.py:162
+#, python-format
+msgid "Confirmation instructions have been sent to %(email)s."
+msgstr "A visszaigazoláshoz útmutatót küldtünk a %(email)s címre."
+
+#: flask_security/core.py:164
+#, python-format
+msgid ""
+"You did not confirm your email within %(within)s. New instructions to "
+"confirm your email have been sent to %(email)s."
+msgstr ""
+"Az emailcímed nem lett visszaigazolva %(within)s időn belül. Új utmutatót küldtünk"
+"a %(email)s címre."
+
+#: flask_security/core.py:168
+#, python-format
+msgid ""
+"You did not login within %(within)s. New instructions to login have been "
+"sent to %(email)s."
+msgstr ""
+"A bejelentkezés nem történt meg %(within)s időn belül. Új útmutatót küldtünk "
+"a %(email)s címre."
+
+#: flask_security/core.py:171
+#, python-format
+msgid "Instructions to login have been sent to %(email)s."
+msgstr "A bejelentkezéshez az útmutatót elküldtük a %(email)s címre."
+
+#: flask_security/core.py:173
+msgid "Invalid login token."
+msgstr "Érvénytelen bejelentkezési token."
+
+#: flask_security/core.py:175
+msgid "Account is disabled."
+msgstr "Felhasználói fiók korlátozva."
+
+#: flask_security/core.py:177
+msgid "Email not provided"
+msgstr "Nem adtál meg email címet"
+
+#: flask_security/core.py:179
+msgid "Invalid email address"
+msgstr "Érvénytelen emailcím"
+
+#: flask_security/core.py:181
+msgid "Password not provided"
+msgstr "Nem adtál meg jelszót"
+
+#: flask_security/core.py:183
+msgid "No password is set for this user"
+msgstr "Ehhez a felhasználói fiókhoz nincs jelszó megadva"
+
+#: flask_security/core.py:185
+msgid "Password must be at least 6 characters"
+msgstr "A jelszónak legalább 6 karakterből kell állnia"
+
+#: flask_security/core.py:187
+msgid "Specified user does not exist"
+msgstr "A megadott fehasználói fiók nem létezik"
+
+#: flask_security/core.py:189
+msgid "Invalid password"
+msgstr "Érvénytelen jelszó"
+
+#: flask_security/core.py:191
+msgid "You have successfully logged in."
+msgstr "Bejelentkezés sikeres."
+
+#: flask_security/core.py:193
+msgid "Forgot password?"
+msgstr "Elfelejtett jelszó?"
+
+#: flask_security/core.py:195
+msgid ""
+"You successfully reset your password and you have been logged in "
+"automatically."
+msgstr ""
+"A jleszavadat sikeresen reset-elted és automatikusan be is jelentkeztél. "
+""
+
+#: flask_security/core.py:198
+msgid "Your new password must be different than your previous password."
+msgstr "Az új jelszavadnak az előzőtől eltérőnek kell lennie."
+
+#: flask_security/core.py:201
+msgid "You successfully changed your password."
+msgstr "Jelszavadat sikeresen megváltoztattad."
+
+#: flask_security/core.py:203
+msgid "Please log in to access this page."
+msgstr "Kérlek jelentkezz be, hogy ezt a lapot láthasd."
+
+#: flask_security/core.py:205
+msgid "Please reauthenticate to access this page."
+msgstr "Kérlek azonosítsd magad újra, hogy ezt a lapot láthasd."
+
+#: flask_security/forms.py:30
+msgid "Email Address"
+msgstr "Email cím"
+
+#: flask_security/forms.py:31
+msgid "Password"
+msgstr "Jelszó"
+
+#: flask_security/forms.py:32
+msgid "Remember Me"
+msgstr "Emlékezz rám"
+
+#: flask_security/forms.py:33 flask_security/templates/security/_menu.html:4
+#: flask_security/templates/security/login_user.html:3
+#: flask_security/templates/security/send_login.html:3
+msgid "Login"
+msgstr "Bejelentkezés"
+
+#: flask_security/forms.py:34 flask_security/templates/security/_menu.html:6
+#: flask_security/templates/security/register_user.html:3
+msgid "Register"
+msgstr "Regisztráció"
+
+#: flask_security/forms.py:35
+msgid "Resend Confirmation Instructions"
+msgstr "Küldd újra a visszaigazolási útmutatót"
+
+#: flask_security/forms.py:36
+msgid "Recover Password"
+msgstr "Jelszó visszaállítás"
+
+#: flask_security/forms.py:37
+msgid "Reset Password"
+msgstr "Jelszó reset"
+
+#: flask_security/forms.py:38
+msgid "Retype Password"
+msgstr "Add meg újra a jelszót"
+
+#: flask_security/forms.py:39
+msgid "New Password"
+msgstr "Új jelszó"
+
+#: flask_security/forms.py:40
+msgid "Change Password"
+msgstr "Jelszó módosítása"
+
+#: flask_security/forms.py:41
+msgid "Send Login Link"
+msgstr "Bejelentkező link elküldése"
+
+#: flask_security/templates/security/_menu.html:2
+msgid "Menu"
+msgstr "Menü"
+
+#: flask_security/templates/security/_menu.html:9
+msgid "Forgot password"
+msgstr "Elfelejtett jelszó"
+
+#: flask_security/templates/security/_menu.html:12
+msgid "Confirm account"
+msgstr "Felhasználói fiók visszaigazolása"
+
+#: flask_security/templates/security/change_password.html:3
+msgid "Change password"
+msgstr "Jelszó módosítása"
+
+#: flask_security/templates/security/forgot_password.html:3
+msgid "Send password reset instructions"
+msgstr "Küldj útmutatót a jelszó reset-eléshez"
+
+#: flask_security/templates/security/reset_password.html:3
+msgid "Reset password"
+msgstr "Jelszó reset"
+
+#: flask_security/templates/security/send_confirmation.html:3
+msgid "Resend confirmation instructions"
+msgstr "Küldd újra az útmutatót a visszaigazoláshoz"
+
+#: flask_security/templates/security/email/change_notice.html:1
+msgid "Your password has been changed."
+msgstr "A jelszavad megváltozott."
+
+#: flask_security/templates/security/email/change_notice.html:3
+msgid "If you did not change your password,"
+msgstr "Amennyiben nem te változtattad meg a jelszavad"
+
+#: flask_security/templates/security/email/change_notice.html:3
+msgid "click here to reset it"
+msgstr "ide kattintva reset-elheted"
+
+#: flask_security/templates/security/email/confirmation_instructions.html:1
+msgid "Please confirm your email through the link below:"
+msgstr "Kérlek igazold vissza email címedet az alábbi linkre kattintva:"
+
+#: flask_security/templates/security/email/confirmation_instructions.html:3
+#: flask_security/templates/security/email/welcome.html:6
+msgid "Confirm my account"
+msgstr "Felhasználói fiókom visszaigazolása"
+
+#: flask_security/templates/security/email/login_instructions.html:1
+#: flask_security/templates/security/email/welcome.html:1
+#, python-format
+msgid "Welcome %(email)s!"
+msgstr "Üdvözlet %(email)s!"
+
+#: flask_security/templates/security/email/login_instructions.html:3
+msgid "You can log into your account through the link below:"
+msgstr "Az alábbi linken jelentkezhetsz be:"
+
+#: flask_security/templates/security/email/login_instructions.html:5
+msgid "Login now"
+msgstr "Bejelentkezés most"
+
+#: flask_security/templates/security/email/reset_instructions.html:1
+msgid "Click here to reset your password"
+msgstr "Ide kattints a jelszó reset-eléshez"
+
+#: flask_security/templates/security/email/welcome.html:4
+msgid "You can confirm your email through the link below:"
+msgstr "Az email címedet az alábbi linkre kattintva igazolhatod vissza:"
+
