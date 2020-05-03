@@ -40,6 +40,8 @@ possible using SQLAlchemy:
     app.config['DEBUG'] = True
     app.config['SECRET_KEY'] = 'super-secret'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+    # Bcrypt is set as default SECURITY_PASSWORD_HASH, which requires a salt
+    app.config['SECURITY_PASSWORD_SALT'] = 'super-secret-random-salt'
 
     # Create database connection object
     db = SQLAlchemy(app)
@@ -233,6 +235,8 @@ possible using MongoEngine:
     app = Flask(__name__)
     app.config['DEBUG'] = True
     app.config['SECRET_KEY'] = 'super-secret'
+    # Bcrypt is set as default SECURITY_PASSWORD_HASH, which requires a salt
+    app.config['SECURITY_PASSWORD_SALT'] = 'super-secret-random-salt'
 
     # MongoDB Config
     app.config['MONGODB_DB'] = 'mydatabase'
@@ -307,6 +311,8 @@ possible using Peewee:
         'name': 'example.db',
         'engine': 'peewee.SqliteDatabase',
     }
+    # Bcrypt is set as default SECURITY_PASSWORD_HASH, which requires a salt
+    app.config['SECURITY_PASSWORD_SALT'] = 'super-secret-random-salt'
 
     # Create database connection object
     db = Database(app)

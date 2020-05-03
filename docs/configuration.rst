@@ -40,10 +40,8 @@ Core
                                          ``bcrypt``, ``sha512_crypt``, or
                                          ``pbkdf2_sha512``. Defaults to
                                          ``bcrypt``.
-``SECURITY_PASSWORD_SALT``               Specifies the HMAC salt. This is only
-                                         used if the password hash type is set
-                                         to something other than plain text.
-                                         Defaults to ``None``.
+``SECURITY_PASSWORD_SALT``               Specifies the HMAC salt. Defaults to
+                                         ``None``.
 ``SECURITY_PASSWORD_SINGLE_HASH``        Specifies that passwords should only be
                                          hashed once. By default, passwords are
                                          hashed twice, first with
