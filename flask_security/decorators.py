@@ -43,7 +43,7 @@ def _get_unauthorized_response(text=None, headers=None):
 
 
 def _get_unauthorized_view():
-    view = utils.get_url(utils.config_value('UNAUTHORIZED_VIEW'))
+    view = utils.config_value('UNAUTHORIZED_VIEW')
     if view:
         if callable(view):
             view = view()
