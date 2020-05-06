@@ -11,6 +11,7 @@
 """
 
 import inspect
+import logging
 
 from flask import Markup, current_app, flash, request
 from flask_login import current_user
@@ -24,6 +25,8 @@ from .utils import _, _datastore, config_value, get_message, hash_password, \
     localize_callback, url_for_security, validate_redirect_url
 
 lazy_gettext = make_lazy_gettext(lambda: localize_callback)
+
+logger = logging.getLogger("FlaskSecurityAuditLogs")
 
 _default_field_labels = {
     'email': _('Email Address'),
@@ -233,23 +236,29 @@ class LoginForm(Form, NextFormMixin):
 
         if self.user is None:
             self.email.errors.append(get_message('USER_DOES_NOT_EXIST')[0])
+            logger.warning("LoginError: " + self.email.data + " USER_DOES_NOT_EXIST")
             # Reduce timing variation between existing and non-existung users
             hash_password(self.password.data)
             return False
         if not self.user.password:
             self.password.errors.append(get_message('PASSWORD_NOT_SET')[0])
+            logger.warning("LoginError: " + self.email.data + " PASSWORD_NOT_SET")
             # Reduce timing variation between existing and non-existung users
             hash_password(self.password.data)
             return False
         if not self.user.verify_and_update_password(self.password.data):
             self.password.errors.append(get_message('INVALID_PASSWORD')[0])
+            logger.warning("LoginError: " + self.email.data + " INVALID_PASSWORD")
             return False
         if requires_confirmation(self.user):
             self.email.errors.append(get_message('CONFIRMATION_REQUIRED')[0])
+            logger.warning("LoginError: " + self.email.data + " CONFIRMATION_REQUIRED")
             return False
         if not self.user.is_active:
             self.email.errors.append(get_message('DISABLED_ACCOUNT')[0])
+            logger.warning("LoginError: " + self.email.data + " DISABLED_ACCOUNT")
             return False
+        logger.info("LoginSuccess: " + self.email.data + " SUCCESSFUL_LOGIN")
         return True
 
 
