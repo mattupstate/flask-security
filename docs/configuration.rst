@@ -214,6 +214,26 @@ Feature Flags
                           change password endpoint. The URL for this endpoint is
                           specified by the ``SECURITY_CHANGE_URL`` configuration
                           option. Defaults to ``False``.
+``SECURITY_LOGINABLE``    Specifies if Flask-Security should enable the login
+                          endpoint. The URL for this endpoint is specified by
+                          the ``SECURITY_LOGIN_URL`` configuration option.
+                          This should generally be left enabled, unless you
+                          want to use a custom login endpoint instead of the one
+                          provided by Flask-Security. Note that this flag
+                          does not affect whether or not authentication is
+                          enforced across your site's views. For controlling
+                          that, refer to the ``LOGIN_DISABLED`` flag for
+                          Flask-Login. Defaults to ``True``.
+``SECURITY_LOGOUTABLE`    Specifies if Flask-Security should enable the logout
+                          endpoint. The URL for this endpoint is specified by
+                          the ``SECURITY_LOGOUT_URL`` configuration option.
+                          This should generally be left enabled, unless you
+                          want to use a custom logout endpoint instead of the
+                          one provided by Flask-Security. Note that this flag
+                          does not affect whether or not authentication is
+                          enforced across your site's views. For controlling
+                          that, refer to the ``LOGIN_DISABLED`` flag for
+                          Flask-Login. Defaults to ``True``.
 ========================= ======================================================
 
 Email

@@ -90,6 +90,8 @@ _default_config = {
     'TRACKABLE': False,
     'PASSWORDLESS': False,
     'CHANGEABLE': False,
+    'LOGINABLE': True,
+    'LOGOUTABLE': True,
     'SEND_REGISTER_EMAIL': True,
     'SEND_PASSWORD_CHANGE_EMAIL': True,
     'SEND_PASSWORD_RESET_EMAIL': True,

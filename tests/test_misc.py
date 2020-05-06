@@ -32,10 +32,13 @@ def test_async_email_task(app, client):
     assert app.mail_sent is True
 
 
-def test_register_blueprint_flag(app, sqlalchemy_datastore):
-    app.security = Security(app, datastore=Security, register_blueprint=False)
+def test_not_logoutable(app, sqlalchemy_datastore):
+    app.config['SECURITY_LOGOUTABLE'] = False
+    app.security = Security(app, datastore=sqlalchemy_datastore)
     client = app.test_client()
-    response = client.get('/login')
+    e = 'matt@lp.com'
+    authenticate(client, email=e)
+    response = client.get('/logout')
     assert response.status_code == 404
 
 
@@ -280,3 +283,34 @@ def test_custom_forms_via_config(app, sqlalchemy_datastore):
 def test_without_babel(client):
     response = client.get('/login')
     assert b'Login' in response.data
+
+
+def test_register_blueprint_flag(app, sqlalchemy_datastore):
+    app.security = Security(app, datastore=Security, register_blueprint=False)
+    client = app.test_client()
+    response = client.get('/login')
+    assert response.status_code == 404
+
+
+def test_loginable(app, sqlalchemy_datastore):
+    app.security = Security(app, datastore=sqlalchemy_datastore)
+    client = app.test_client()
+    response = client.get('/login')
+    assert response.status_code == 200
+
+
+def test_not_loginable(app, sqlalchemy_datastore):
+    app.config['SECURITY_LOGINABLE'] = False
+    app.security = Security(app, datastore=sqlalchemy_datastore)
+    client = app.test_client()
+    response = client.get('/login')
+    assert response.status_code == 404
+
+
+def test_logoutable(app, sqlalchemy_datastore):
+    app.security = Security(app, datastore=sqlalchemy_datastore)
+    client = app.test_client()
+    e = 'matt@lp.com'
+    authenticate(client, email=e)
+    response = client.get('/logout')
+    assert response.status_code == 302
