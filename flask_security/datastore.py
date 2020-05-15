@@ -9,7 +9,7 @@
     :license: MIT, see LICENSE for more details.
 """
 
-from .utils import get_identity_attributes, string_types
+from .utils import get_identity_attributes, string_types, config_value
 
 
 class Datastore(object):
@@ -124,7 +124,7 @@ class UserDatastore(object):
         return user, role
 
     def _prepare_create_user_args(self, **kwargs):
-        kwargs.setdefault('active', True)
+        kwargs.setdefault('active', not config_value('MANUAL_USER_ACTIVATION'))
         roles = kwargs.get('roles', [])
         for i, role in enumerate(roles):
             rn = role.name if isinstance(role, self.role_model) else role

@@ -82,6 +82,9 @@ Core
 ``SECURITY_DEFAULT_HTTP_AUTH_REALM``     Specifies the default authentication
                                          realm when using basic HTTP auth.
                                          Defaults to ``Login Required``
+``MANUAL_USER_ACTIVATION``               Specifies whether new users must be
+                                         manually activated by an administrator.
+                                         Defaults to ``False``.
 ======================================== =======================================
 
 
