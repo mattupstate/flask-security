@@ -295,6 +295,12 @@ Miscellaneous
                                               the value of
                                               ``SECURITY_CONFIRMABLE`` is set to
                                               ``True``. Defaults to ``False``.
+``SECURITY_LOGIN_SHOW_USER_EXISTENCE``        Specifies the login api whether to
+                                              show user does not exist message
+                                              ``SECURITY_MSG_USER_DOES_NOT_EXIST``
+                                              or empty password message
+                                              ``SECURITY_MSG_PASSWORD_NOT_SET``.
+                                              Defaults to ``True``.
 ``SECURITY_CONFIRM_SALT``                     Specifies the salt value when
                                               generating confirmation
                                               links/tokens. Defaults to

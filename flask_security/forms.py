@@ -232,14 +232,22 @@ class LoginForm(Form, NextFormMixin):
         self.user = _datastore.get_user(self.email.data)
 
         if self.user is None:
-            self.email.errors.append(get_message('USER_DOES_NOT_EXIST')[0])
-            # Reduce timing variation between existing and non-existung users
-            hash_password(self.password.data)
+            if current_app.extensions['security'].login_show_user_existence:
+                self.email.errors.append(get_message('USER_DOES_NOT_EXIST')[0])
+            else:
+                self.password.errors.append(get_message('INVALID_PASSWORD')[0])
+                # Reduce timing variation between existing and non-existung
+                # users
+                hash_password(self.password.data)
             return False
         if not self.user.password:
-            self.password.errors.append(get_message('PASSWORD_NOT_SET')[0])
-            # Reduce timing variation between existing and non-existung users
-            hash_password(self.password.data)
+            if current_app.extensions['security'].login_show_user_existence:
+                self.password.errors.append(get_message('PASSWORD_NOT_SET')[0])
+            else:
+                self.password.errors.append(get_message('INVALID_PASSWORD')[0])
+                # Reduce timing variation between existing and non-existung
+                # users
+                hash_password(self.password.data)
             return False
         if not self.user.verify_and_update_password(self.password.data):
             self.password.errors.append(get_message('INVALID_PASSWORD')[0])

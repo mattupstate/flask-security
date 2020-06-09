@@ -98,6 +98,7 @@ _default_config = {
     'CONFIRM_EMAIL_WITHIN': '5 days',
     'RESET_PASSWORD_WITHIN': '5 days',
     'LOGIN_WITHOUT_CONFIRMATION': False,
+    'LOGIN_SHOW_USER_EXISTENCE': True,
     'EMAIL_SENDER': LocalProxy(lambda: current_app.config.get(
         'MAIL_DEFAULT_SENDER', 'no-reply@localhost'
     )),
