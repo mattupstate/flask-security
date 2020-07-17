@@ -21,6 +21,19 @@ class Role(RoleMixin):
     pass
 
 
+class FakeUserDatastore(UserDatastore):
+    def find_role(self, role_name):
+        return role_name if role_name != 'lordofchaos' else None
+
+
+class FakeUserModel(object):
+    roles = 'ABC'
+
+
+class FakeUserModelWithoutRoles(object):
+    pass
+
+
 def test_unimplemented_datastore_methods():
     datastore = Datastore(None)
     assert datastore.db is None
@@ -183,3 +196,28 @@ def test_init_app_kwargs_override_constructor_kwargs(app, datastore):
 
     assert security.login_form == 'init_app_login_form'
     assert security.register_form == '__init__register_form'
+
+
+def test_prepare_create_user_args_with_roles():
+    datastore = FakeUserDatastore(FakeUserModel(), type(None))
+    roles = ['godofthunder', 'lordofchaos', 'majordufus']
+
+    create_kwargs = datastore._prepare_create_user_args(roles=roles)
+
+    assert create_kwargs == {
+        'active': True, 'roles': ['godofthunder', 'majordufus']}
+
+
+def test_prepare_create_user_args_without_roles():
+    datastore = FakeUserDatastore(FakeUserModel(), type(None))
+
+    create_kwargs = datastore._prepare_create_user_args(active=False)
+
+    assert create_kwargs == {'active': False}
+
+
+def test_prepare_create_user_args_without_usermodel_roles():
+    datastore = FakeUserDatastore(FakeUserModelWithoutRoles(), type(None))
+
+    with raises(ValueError):
+        datastore._prepare_create_user_args(roles=['hippotamer'])

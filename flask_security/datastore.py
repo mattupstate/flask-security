@@ -126,11 +126,26 @@ class UserDatastore(object):
     def _prepare_create_user_args(self, **kwargs):
         kwargs.setdefault('active', True)
         roles = kwargs.get('roles', [])
-        for i, role in enumerate(roles):
-            rn = role.name if isinstance(role, self.role_model) else role
-            # see if the role exists
-            roles[i] = self.find_role(rn)
-        kwargs['roles'] = roles
+
+        if not hasattr(self.user_model, 'roles') and roles:
+            raise ValueError((
+                'Cannot create user with roles %s, because the user '
+                'model has no "roles" attribute') % str(roles))
+
+        if roles:
+            roles_to_add = []
+
+            for role in roles:
+                rn = role.name if isinstance(role, self.role_model) else role
+
+                # see if the role exists
+                role_to_add = self.find_role(rn)
+
+                if role_to_add:
+                    roles_to_add.append(role_to_add)
+
+            kwargs['roles'] = roles_to_add
+
         return kwargs
 
     def get_user(self, id_or_email):
