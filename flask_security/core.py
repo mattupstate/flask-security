@@ -336,7 +336,8 @@ def _get_serializer(app, name):
 
 def _get_state(app, datastore, anonymous_user=None, **kwargs):
     for key, value in get_config(app).items():
-        kwargs[key.lower()] = value
+        if kwargs.get(key.lower()) is None:
+            kwargs[key.lower()] = value
 
     kwargs.update(dict(
         app=app,
