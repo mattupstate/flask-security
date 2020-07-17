@@ -18,16 +18,16 @@ from werkzeug.local import LocalProxy
 from .changeable import change_user_password
 from .confirmable import confirm_email_token_status, confirm_user, \
     send_confirmation_instructions
-from .decorators import anonymous_user_required, login_required
+from .decorators import anonymous_user_required, auth_required
 from .passwordless import login_token_status, send_login_instructions
 from .recoverable import reset_password_token_status, \
     send_reset_password_instructions, update_password
 from .registerable import register_user
-from .utils import url_for_security as url_for
 from .utils import config_value, do_flash, get_message, \
     get_post_login_redirect, get_post_logout_redirect, \
     get_post_register_redirect, get_url, login_user, logout_user, \
     slash_url_suffix
+from .utils import url_for_security as url_for
 
 # Convenient references
 _security = LocalProxy(lambda: current_app.extensions['security'])
@@ -303,7 +303,7 @@ def reset_password(token):
     )
 
 
-@login_required
+@auth_required('session', 'token', 'basic')
 def change_password():
     """View function which handles a change password request."""
 
@@ -325,7 +325,7 @@ def change_password():
 
     if request.is_json:
         form.user = current_user
-        return _render_json(form)
+        return _render_json(form, include_auth_token=True)
 
     return _security.render_template(
         config_value('CHANGE_PASSWORD_TEMPLATE'),
