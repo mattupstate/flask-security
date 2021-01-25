@@ -390,10 +390,10 @@ in HTTP proxy environment. The following code illustrates a setup
 with a single HTTP proxy in front of the web application::
 
     # At top of file
-    from werkzeug.contrib.fixers import ProxyFix
+    from werkzeug.middleware.proxy_fix import ProxyFix
 
     # After 'Create app'
-    app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=1)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
-To learn more about the ``ProxyFix`` middleware, please see the
-`Werkzeug documentation <http://werkzeug.pocoo.org/docs/latest/contrib/fixers/#werkzeug.contrib.fixers.ProxyFix>`_.
+
+To learn more about the ``ProxyFix`` middleware, please see the `Werkzeug documentation <https://werkzeug.palletsprojects.com/en/1.0.x/middleware/proxy_fix/>`_.
