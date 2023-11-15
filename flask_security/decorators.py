@@ -12,7 +12,7 @@
 from collections import namedtuple
 from functools import wraps
 
-from flask import Response, _request_ctx_stack, abort, current_app, redirect, \
+from flask import Response, abort, current_app, redirect, \
     request, url_for
 from flask_login import current_user, login_required  # pragma: no flakes
 from flask_principal import Identity, Permission, RoleNeed, identity_changed
@@ -67,7 +67,7 @@ def _check_token():
 
     if user and user.is_authenticated:
         app = current_app._get_current_object()
-        _request_ctx_stack.top.user = user
+        g.user = user
         identity_changed.send(app, identity=Identity(user.id))
         return True
 
@@ -83,7 +83,7 @@ def _check_http_auth():
     if user and user.verify_and_update_password(auth.password):
         _security.datastore.commit()
         app = current_app._get_current_object()
-        _request_ctx_stack.top.user = user
+        g.user = user
         identity_changed.send(app, identity=Identity(user.id))
         return True
 

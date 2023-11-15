@@ -541,10 +541,10 @@ class Security(object):
             app.register_blueprint(create_blueprint(state, __name__))
             app.context_processor(_context_processor)
 
-        @app.before_first_request
-        def _register_i18n():
-            if '_' not in app.jinja_env.globals:
-                app.jinja_env.globals['_'] = state.i18n_domain.gettext
+        # @app.before_first_request
+        # def _register_i18n():
+        if '_' not in app.jinja_env.globals:
+            app.jinja_env.globals['_'] = state.i18n_domain.gettext
 
         state.render_template = self.render_template
         state.send_mail = self.send_mail

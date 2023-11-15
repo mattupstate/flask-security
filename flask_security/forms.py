@@ -12,9 +12,10 @@
 
 import inspect
 
-from flask import Markup, current_app, flash, request
+from flask import current_app, flash, request
 from flask_login import current_user
 from flask_wtf import FlaskForm as BaseForm
+from markupsafe import Markup
 from speaklater import make_lazy_gettext
 from wtforms import BooleanField, Field, HiddenField, PasswordField, \
     StringField, SubmitField, ValidationError, validators
